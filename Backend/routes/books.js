@@ -12,7 +12,31 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  res.send("create new book");
+  const {
+    title,
+    description,
+    image_url,
+    release_year,
+    price,
+    total_page,
+    category_id,
+  } = req.body;
+
+  const thickness =
+    total_page <= 100 ? "tipis" : total_page <= 200 ? "sedang" : "tebal";
+
+  const sql = `INSERT INTO books (title, description, image_url, release_year, price, total_page, thickness, category_id) VALUES ('${title}', '${description}', '${image_url}', ${release_year}, '${price}', ${total_page}, '${thickness}', ${category_id})`;
+  db.query(sql, (err, fields) => {
+    console.log(fields);
+    if (err) response(500, "invalid", "Something went wrong", res);
+    if (fields?.affectedRows) {
+      const data = {
+        isSuccess: fields.affectedRows,
+        id: fields.insertId,
+      };
+      response(200, data, "Data added successfully", res);
+    }
+  });
 });
 
 router
