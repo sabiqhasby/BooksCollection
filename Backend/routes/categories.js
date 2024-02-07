@@ -34,10 +34,35 @@ router.post("/", (req, res) => {
 router
   .route("/:id")
   .patch((req, res) => {
-    res.send("update category by id category");
+    const { name } = req.body;
+    const id = req.params.id;
+    const sql = `UPDATE categories SET name='${name}' WHERE id=${id}`;
+    db.query(sql, (err, fields) => {
+      if (err) response(500, "failed insert data", err, res);
+      if (fields?.affectedRows) {
+        const data = {
+          isSuccess: fields.affectedRows,
+          id: id,
+          name: name,
+        };
+        response(200, data, "successfully updated category", res);
+      }
+    });
   })
   .delete((req, res) => {
-    res.send("delete category by id category");
+    const id = req.params.id;
+
+    const sql = `DELETE FROM categories WHERE id= ${id}`;
+    db.query(sql, (err, fields) => {
+      if (err) response(500, "failed insert data", err, res);
+      if (fields?.affectedRows) {
+        const data = {
+          isSuccess: fields.affectedRows,
+          message: `deleted category with id : ${id}`,
+        };
+        response(200, data, "successfully updated category", res);
+      }
+    });
   });
 
 ////MIDLEWARE
