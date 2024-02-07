@@ -13,7 +13,14 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id/books", (req, res) => {
-  res.send("show all data books by id category");
+  const id = req.params.id;
+  const sql = `SELECT * FROM books WHERE category_id=${id}`;
+  db.query(sql, (err, result) => {
+    if (err) response(400, "Error", err, res);
+    if (!result.length)
+      response(400, "Not Found", "category_id not found", res);
+    response(200, result, "Show all books by Category ID", res);
+  });
 });
 
 router.post("/", (req, res) => {
