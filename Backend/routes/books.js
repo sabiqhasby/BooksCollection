@@ -68,7 +68,23 @@ router
     });
   })
   .delete((req, res) => {
-    res.send("delete book by id");
+    const id = req.params.id;
+    const sql = `DELETE FROM books WHERE id=${id}`;
+
+    db.query(sql, (err, fields) => {
+      if (err) {
+        console.log(err);
+        response(404, "not found", "Book not found.", res);
+      }
+      if (fields?.affectedRows) {
+        console.log(fields);
+        const data = {
+          isSuccess: fields.affectedRows,
+          message: `book with id=${id} deleted`,
+        };
+        response(200, data, "Delete Successfully!", res);
+      }
+    });
   });
 
 ////MIDLEWARE
