@@ -7,6 +7,7 @@ router.get("/", (req, res) => {
   const sql = "SELECT * FROM books";
 
   db.query(sql, (err, result) => {
+    if (err) response(500, "invalid", err, res);
     response(200, result, "get all data books", res);
   });
 });

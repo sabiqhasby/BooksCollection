@@ -7,6 +7,7 @@ router.get("/", (req, res) => {
   const sql = "SELECT * FROM categories";
 
   db.query(sql, (err, result) => {
+    if (err) response(500, "invalid", err, res);
     response(200, result, "Show all category", res);
   });
 });
@@ -16,7 +17,18 @@ router.get("/:id/books", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  res.send("Create new category");
+  const { name } = req.body;
+  const sql = `INSERT INTO categories (name) VALUES ('${name}')`;
+  db.query(sql, (err, fields) => {
+    if (err) response(500, "failed insert data", err, res);
+    if (fields?.affectedRows) {
+      const data = {
+        isSuccess: fields.affectedRows,
+        id: fields.insertId,
+      };
+      response(200, data, "successfully added new category", res);
+    }
+  });
 });
 
 router
