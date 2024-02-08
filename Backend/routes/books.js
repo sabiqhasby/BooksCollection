@@ -4,30 +4,18 @@ const response = require("../response");
 const db = require("../connection");
 
 router.get("/", (req, res) => {
-  // let query = sql;
   const { title, sortByTitle, minYear, maxYear, minPage, maxPage } = req.query;
-  if (req.query) {
-    if (title) {
-      query = `title='${title}'`;
-    } else if (sortByTitle) {
-      query = `title ${sortByTitle.toUpperCase()}`;
-    } else if (minYear) {
-      query = `release_year >= ${minYear}`;
-    } else if (maxYear) {
-      query = `release_year <= ${maxYear}`;
-    } else if (minPage) {
-      query = `total_page >= ${minPage}`;
-    } else if (maxPage) {
-      query = `total_page <= ${maxPage}`;
-    } else {
-      query = "";
-    }
-  }
-  const sql = `SELECT * FROM books ${
-    !req.query.sortByTitle ? "WHERE" : req.query.sortByTitle ? "ORDER BY" : ""
-  } ${query}`;
 
-  console.log(req.query);
+  let sql = "SELECT * FROM books WHERE 1=1";
+
+  // FILTERING BOOKS QUERY
+  if (title) sql += ` AND title LIKE '%${title}%'`;
+  if (minYear) sql += ` AND release_year >= ${minYear}`;
+  if (maxYear) sql += ` AND release_year <= ${maxYear}`;
+  if (minPage) sql += ` AND total_page >= ${minPage}`;
+  if (maxPage) sql += ` AND total_page <= ${maxPage}`;
+  if (sortByTitle) sql += ` ORDER BY title ${sortByTitle}`;
+  console.log(sql);
 
   db.query(sql, (err, result) => {
     if (err) response(500, "invalid", err, res);
