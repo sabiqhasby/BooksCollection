@@ -1,15 +1,11 @@
 import { ref } from "vue";
 
-export function useFetch(url: any) {
-  const data = ref(null);
+export function useFetch(url: any, method: string = "GET") {
+  const data = ref([]);
   const error = ref(null);
 
   fetch(url, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET",
-    },
-    mode: "no-cors",
+    method: method,
   })
     .then((res) => res.json())
     .then((json) => (data.value = json))
