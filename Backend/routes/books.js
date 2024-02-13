@@ -45,6 +45,7 @@ router.post("/", (req, res) => {
     total_page <= 100 ? "tipis" : total_page <= 200 ? "sedang" : "tebal";
 
   const sql = `INSERT INTO books (title, description, image_url, release_year, price, total_page, thickness, category_id) VALUES ('${title}', '${description}', '${image_url}', ${release_year}, '${price}', ${total_page}, '${thickness}', ${category_id})`;
+  console.log(sql);
   db.query(sql, (err, fields) => {
     console.log(fields);
     if (err) response(500, "invalid", "Something went wrong", res);
@@ -75,6 +76,7 @@ router
       total_page <= 100 ? "tipis" : total_page <= 200 ? "sedang" : "tebal";
 
     const sql = `UPDATE books SET title='${title}', description='${description}', image_url='${image_url}', release_year=${release_year}, price='${price}', total_page=${total_page}, thickness='${thickness}', category_id=${category_id} WHERE id=${id}`;
+    console.log(sql);
     db.query(sql, (err, fields) => {
       if (err) response(500, "invalid", "Something went wrong", res);
       if (fields?.affectedRows) {
