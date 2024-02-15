@@ -6,7 +6,7 @@
   </div>
 
   <Modal v-model.modalOpen="active">
-    <FormInput :addData="book" @submitData="submitData" />
+    <FormInput :addData="book" @submit-data="submitData" @delete-data="deleteData" />
   </Modal>
 </template>
 
@@ -84,6 +84,13 @@ async function submitData() {
     refresh()
   }
 
+}
+
+async function deleteData() {
+  await fetch(`http://localhost:3000/books/${selectedBookId.value}`, { method: "DELETE" })
+  reset()
+  active.value = false
+  refresh()
 }
 
 watch(active, (val) => {

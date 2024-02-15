@@ -41,6 +41,8 @@ watch(modalOpen, (val) => {
 
 .modal .modal-content {
   position: absolute;
+  overflow: auto;
+
   background-color: #fefefe;
   /* margin: 15% auto; */
   /* margin-inline: auto;

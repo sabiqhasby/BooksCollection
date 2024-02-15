@@ -1,62 +1,132 @@
 <template>
-  <form class="form">
+  <Form @submit="submitData" :validation-schema="schema" class="form">
     <label for="title">Title</label>
-    <input v-model="addData.title" type="text" name="title" id="title">
+    <Field v-model:model-value="addData.title" name="title" rules="required" />
+    <ErrorMessage class="alert-field" name="title" />
+
     <label for="description">Description</label>
-    <textarea v-model="addData.description" name="description" id="description" />
+    <Field as="textarea" v-model:model-value="addData.description" class="description" name="description" />
+    <ErrorMessage class="alert-field" name="description" />
+
     <label for="release_year">Release</label>
-    <input v-model="addData.release_year" type="text" name="release_year" id="release_year">
+    <Field v-model:model-value="addData.release_year" name="release_year" />
+    <ErrorMessage class="alert-field" name="release_year" />
+
     <label for="price">Price</label>
-    <input v-model="addData.price" type="text" name="price" id="price">
+    <Field v-model:model-value="addData.price" name="price" />
+    <ErrorMessage class="alert-field" name="price" />
+
     <label for="total_page">Total Page</label>
-    <input v-model="addData.total_page" type="text" name="total_page" id="total_page">
+    <Field v-model:model-value="addData.total_page" name="total_page" />
+    <ErrorMessage class="alert-field" name="total_page" />
+
     <label for="image_url">Image Url</label>
-    <input v-model="addData.image_url" type="text" name="image_url" id="image_url">
+    <Field v-model:model-value="addData.image_url" name="image_url" />
+    <ErrorMessage class="alert-field" name="image_url" />
+
     <label for="category_id">Category</label>
-    <input v-model="addData.category_id" type="text" name="category_id" id="category_id">
-    <button @click.prevent="submitData" class="btn-submit">Submit</button>
-  </form>
+    <Field v-model:model-value="bookStore.book.category_id" as="select" name="category_id">
+      <option :value="1">1</option>
+      <option :value="2">2</option>
+      <option :value="3">3</option>
+    </Field>
+    <ErrorMessage class="alert-field" name="category_id" />
+
+    <div class="button-group">
+      <button type="submit" class="btn submit">Submit</button>
+
+      <button v-if="bookStore.modalType === 'edit'" @click.prevent="deleteData" class="btn delete">Delete</button>
+    </div>
+  </Form>
 </template>
 
 <script lang="ts" setup>
+import { defineEmits } from "vue";
 import { useBookStore } from '../store/booksStore.ts'
 // import { Books } from '../type/books';
-
-
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 defineProps<{
   addData: any
 }>()
 const bookStore = useBookStore()
 
-const emit = defineEmits(["submitData"])
 
-function submitData() {
-  if (bookStore.modalType === "create") {
-    emit("submitData", 'create')
+const schema = yup.object({
+  title: yup.string().required(),
+  description: yup.string().required(),
+  release_year: yup.string().required(),
+  price: yup.string().required(),
+  total_page: yup.number().required(),
+  image_url: yup.string().required(),
+  category_id: yup.number().required(),
+})
+
+
+const emit = defineEmits(["submitData", "deleteData"])
+
+
+
+
+function submitData(values: any) {
+
+  console.log(values);
+  if (values) {
+
+    if (bookStore.modalType === "create") {
+      emit("submitData", 'create')
+    }
+
+    if (bookStore.modalType === "edit") {
+      emit("submitData", 'edit')
+    }
   }
 
-  if (bookStore.modalType === "edit") {
-    emit("submitData", 'edit')
-  }
+}
 
+function deleteData() {
+  emit("deleteData")
 }
 </script>
 
 
 <style  scoped>
-.btn-submit {
+.alert-field {
+  font-size: small;
+  color: red;
+}
+
+.button-group {
+  display: flex;
+  gap: 5px;
+}
+
+.btn {
   padding-inline: 10px;
   padding-block: 14px;
-  background-color: #413c3c;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   width: 90px;
+  font-family: inherit;
+  margin-top: 10px;
 
 }
 
-.btn-submit:hover {
+.btn.submit {
+  background-color: rgb(54, 47, 47);
+}
+
+.btn.delete {
+  background-color: red;
+}
+
+.btn:hover {
   background-color: #252323;
+}
+
+.btn.btn.delete:hover {
+  background-color: #ff3838;
 }
 
 
@@ -71,19 +141,27 @@ function submitData() {
 label {
   color: black;
   font-size: small;
-}
-
-input,
-textarea {
-  padding: 10px;
-  background-color: rgb(183, 193, 196);
-  border-radius: 5px;
-  border: none;
-  color: rgb(46, 43, 43);
   font-family: inherit;
 }
 
+input,
+select,
 textarea {
-  resize: vertical;
+  height: 40px;
+  padding-inline: 15px;
+  padding-block: 5px;
+  background-color: rgb(216, 225, 228);
+  border-radius: 5px;
+  border: none;
+  color: rgb(46, 43, 43);
+  font-size: medium;
+  font-family: inherit;
+}
+
+
+.description {
+  font-family: inherit;
+  resize: none;
+  height: 50px;
 }
 </style>
